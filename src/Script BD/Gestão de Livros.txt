@@ -1,0 +1,127 @@
+CREATE TABLE Livro (
+	ID VARCHAR(10),
+	Titulo VARCHAR(50) NOT NULL,
+	GeneOne VARCHAR(50) NOT NULL,
+	GeneTwo VARCHAR(50) NOT NULL,
+	Status VARCHAR(30) NOT NULL,
+	CodAutor VARCHAR(10),
+	
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE Autor (
+	ID VARCHAR(10),
+	Nome VARCHAR(50) NOT NULL,
+	Nacionalidade VARCHAR(30) NOT NULL,
+	
+	PRIMARY KEY (ID)
+);
+
+ALTER TABLE Livro ADD FOREIGN KEY(CodAutor) REFERENCES Autor(ID);
+
+CREATE TABLE Avaliation (
+	ID VARCHAR(10),
+	CodLivro VARCHAR(10),
+	Data DATE DEFAULT CURRENT_DATE,
+	Descrition VARCHAR (100) NOT NULL,
+	
+	PRIMARY KEY (ID),
+	FOREIGN KEY(CodLivro) REFERENCES Livro(ID)
+);
+
+CREATE OR REPLACE FUNCTION CodigoLivro () RETURNS VARCHAR -- Cria um novo código para o livro
+AS $$
+	DECLARE
+		Codigo VARCHAR;
+		CodNum INT;
+		IdNum INT;
+	BEGIN
+		SELECT INTO Codigo MAX(Id)
+		FROM Livro; 
+		
+		IF 	CAST(SUBSTRING(Codigo, 5) AS INT) < 9 THEN 
+			IdNum:= CAST(SUBSTRING(Codigo, 5) AS INT) + 1;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT);
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		
+		ELSE
+			IdNum:= 0;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT) + 1;
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		END IF;
+		
+		RETURN Codigo;
+	END;
+	$$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION CodigoAutor () RETURNS VARCHAR -- Cria um novo código para o autor
+AS $$
+	DECLARE
+		Codigo VARCHAR;
+		CodNum INT;
+		IdNum INT;
+	BEGIN
+		SELECT INTO Codigo MAX(Id)
+		FROM Autor; 
+		
+		IF 	CAST(SUBSTRING(Codigo, 5) AS INT) < 9 THEN 
+			IdNum:= CAST(SUBSTRING(Codigo, 5) AS INT) + 1;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT);
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		
+		ELSE
+			IdNum:= 0;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT) + 1;
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		END IF;
+		
+		RETURN Codigo;
+	END;
+	$$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION CodigoAvaliation () RETURNS VARCHAR -- Cria um novo código para o livro
+AS $$
+	DECLARE
+		Codigo VARCHAR;
+		CodNum INT;
+		IdNum INT;
+	BEGIN
+		SELECT INTO Codigo MAX(Id)
+		FROM Avaliation; 
+		
+		IF 	CAST(SUBSTRING(Codigo, 5) AS INT) < 9 THEN 
+			IdNum:= CAST(SUBSTRING(Codigo, 5) AS INT) + 1;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT);
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		
+		ELSE
+			IdNum:= 0;
+			IdNum:= CAST(IdNum AS VARCHAR);
+			CodNum:= CAST(SPLIT_PART(Codigo, '-', 1) AS INT) + 1;
+			CodNum:= CAST(CodNum AS VARCHAR);
+			Codigo:= CodNum || '-' || IdNum;
+		END IF;
+		
+		RETURN Codigo;
+	END;
+	$$ LANGUAGE PLPGSQL;
+
+
+INSERT INTO Autor (Id, Nome, Nacionalidade)
+VALUES('111-0', 'José de Alencar', 'Brasileiro');
+
+INSERT INTO Livro (Id, Titulo, GeneOne, GeneTwo, Status, CodAutor)
+VALUES('111-0', 'Iracema', 'Romance', 'Indianista','Não lido', '111-0');
+
+INSERT INTO Avaliation (Id, CodLivro, Data, Descrition)
+VALUES('111-0', '111-0', DEFAULT, 'Gostei bastante da história do livro. É meu livro preferido');
